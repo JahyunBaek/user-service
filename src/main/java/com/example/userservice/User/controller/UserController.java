@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/health_check")
     public String health_check(HttpServletRequest request){
-        return "health_check ServerPort : " + request.getServerPort();
+        return "health_check User-Service ServerPort : " + request.getServerPort();
     }
 
     @GetMapping("/welcome")
