@@ -4,6 +4,7 @@ import com.example.userservice.User.dto.UserDto;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +12,18 @@ import com.example.userservice.User.entity.UserEntity;
 import com.example.userservice.User.repository.UserRepository;
 import com.example.userservice.User.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.*;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UsersService {
@@ -26,6 +32,7 @@ public class UserServiceImpl implements UsersService {
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder;
+
     @Override
     public UserDto createUser(UserDto user) {
         user.setUserId(UUID.randomUUID().toString());
