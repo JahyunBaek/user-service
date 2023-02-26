@@ -1,5 +1,6 @@
 package com.example.userservice.User.controller;
 
+import com.example.userservice.Security.provider.TokenDto;
 import com.example.userservice.User.dto.UserDto;
 import com.example.userservice.User.entity.UserEntity;
 import com.example.userservice.User.service.UsersService;
@@ -73,5 +74,10 @@ public class UserController {
     @PostMapping(value = "/login")
     public ResponseEntity<ResponseUser> login(@RequestBody RequestUser request) throws Exception {
         return new ResponseEntity<>(usersService.login(request), HttpStatus.OK);
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<TokenDto> refresh(@RequestBody TokenDto token) throws Exception {
+        return new ResponseEntity<>( usersService.refreshAccessToken(token), HttpStatus.OK);
     }
 }

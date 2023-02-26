@@ -1,5 +1,6 @@
 package com.example.userservice.User.vo;
 
+import com.example.userservice.Security.provider.TokenDto;
 import com.example.userservice.User.entity.Authority;
 import com.example.userservice.User.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,9 +24,10 @@ public class ResponseUser {
     private String userId;
     private List<Authority> roles = new ArrayList<>();
 
-    private String token;
+    private TokenDto token;
 
     private List<ResponseOrder> orders;
+
 
     public ResponseUser(UserEntity member) {
         this.userId = member.getUserId();

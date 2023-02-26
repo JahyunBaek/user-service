@@ -2,10 +2,7 @@ package com.example.userservice.Security.provider;
 
 import com.example.userservice.Security.config.CustomUserDetailsService;
 import com.example.userservice.User.entity.Authority;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +28,9 @@ public class JwtProvider {
     private Key secretKey;
 
     // 만료시간 : 1Hour
-    private final long exp = 1000L * 60 * 60;
+
+    @Value("${jwt.access-token-validity-in-seconds}")
+    private final long a_exp;
 
     private final CustomUserDetailsService userDetailsService;
 
@@ -48,7 +47,7 @@ public class JwtProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + exp))
+                .setExpiration(new Date(now.getTime() + a_exp))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -62,6 +61,14 @@ public class JwtProvider {
 
     // 토큰에 담겨있는 유저 email 획득
     public String getEmail(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
+        } catch (ExpiredJwtException e) {
+            e.printStackTrace();
+            return e.getClaims().getSubject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
     }
 
