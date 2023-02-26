@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String username) {
+    public CustomUserDetails loadUserByUsername(final String username) {
         UserEntity userEntity = userRepository.findByEmail(username);
 
         if(userEntity == null) new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다.");
@@ -30,7 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Collection authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-        return new User(userEntity.getEmail(),userEntity.getEncryptedPwd(),
-                true,true,true,true,authorities);
+        return new CustomUserDetails(userEntity);
     }
 }

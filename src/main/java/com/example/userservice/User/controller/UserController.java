@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/user-service")
+/*@RequestMapping("/user-service")*/
 public class UserController {
 
     private final Greeting greeting;
@@ -64,9 +64,14 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<ResponseUser> getUser(@PathVariable("UserId") String userId){
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId){
         UserDto userDto = usersService.getUserByUserId(userId);
         ResponseUser responseUser = new ModelMapper().map(userDto,ResponseUser.class);
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
+    }
+
+    @PostMapping(value = "/login")
+    public ResponseEntity<ResponseUser> login(@RequestBody RequestUser request) throws Exception {
+        return new ResponseEntity<>(usersService.login(request), HttpStatus.OK);
     }
 }
