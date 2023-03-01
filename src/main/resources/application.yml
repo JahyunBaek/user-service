@@ -53,8 +53,8 @@ eureka:
 greeting:
   message: Welcome to Simple E-Commerce.
 
-jwt:
-  secret:
-    key: Yq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeT
-  refresh-token-validity-in-seconds: 1800 # 30 분
-  access-token-validity-in-seconds: 300 # 5 분
+#jwt:
+#  secret:
+#    key: Yq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeT
+#  refresh-token-validity-in-seconds: 1800 # 30 분
+#  access-token-validity-in-seconds: 300 # 5 분
