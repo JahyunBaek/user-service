@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,20 @@ import java.util.List;
 /*@RequestMapping("/user-service")*/
 public class UserController {
 
+    private final Environment environment;
+
     private final Greeting greeting;
 
     private final UsersService usersService;
 
     @GetMapping("/health_check")
     public String health_check(HttpServletRequest request){
-        return "health_check User-Service ServerPort : " + request.getServerPort();
+        String TestStr = "health_check";
+        TestStr += ", key : "+environment.getProperty("jwt.secret.key");
+        TestStr += ", expired : "+environment.getProperty("jwt.access-token-validity-in-seconds");
+        TestStr += ", Port : " + environment.getProperty("server.port");
+        TestStr += ", Local Port : " + environment.getProperty("local.server.port");
+        return TestStr;
     }
 
     @GetMapping("/welcome")
