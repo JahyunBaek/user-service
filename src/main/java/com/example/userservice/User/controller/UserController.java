@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-
+@RefreshScope
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -33,11 +35,15 @@ public class UserController {
 
     private final UsersService usersService;
 
+    @Value("${jwt.access-token-validity-in-seconds}")
+    private long exr;
+
+
     @GetMapping("/health_check")
-    public String health_check(HttpServletRequest request){
+    public String health_check(){
         String TestStr = "health_check";
         TestStr += ", key : "+environment.getProperty("jwt.secret.key");
-        TestStr += ", expired : "+environment.getProperty("jwt.access-token-validity-in-seconds");
+        TestStr += ", expired : "+exr;
         TestStr += ", Port : " + environment.getProperty("server.port");
         TestStr += ", Local Port : " + environment.getProperty("local.server.port");
         return TestStr;

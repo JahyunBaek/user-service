@@ -1,9 +1,10 @@
 server:
   port: 0
-
 spring:
   application:
     name: user-service
+  profiles:
+    active: default
   h2:
     console:
       enabled: true
@@ -26,7 +27,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: ecommerce
 logging:
   level:
     org:
@@ -58,3 +64,8 @@ greeting:
 #    key: Yq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeT
 #  refresh-token-validity-in-seconds: 1800 # 30 분
 #  access-token-validity-in-seconds: 300 # 5 분
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,beans

@@ -6,6 +6,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-
+@RefreshScope
 @RequiredArgsConstructor
 @Component
 public class JwtProvider {
@@ -30,7 +31,7 @@ public class JwtProvider {
     // 만료시간 : 1Hour
 
     @Value("${jwt.access-token-validity-in-seconds}")
-    private final long a_exp;
+    private long a_exp;
 
     private final CustomUserDetailsService userDetailsService;
 

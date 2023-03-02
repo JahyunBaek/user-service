@@ -45,7 +45,7 @@ public class UserServiceImpl implements UsersService {
     private final TokenRepository tokenRepository;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
-    private final Integer r_exp;
+    private Integer r_exp;
 
     public ResponseUser login(RequestUser request) throws Exception {
         UserEntity member = userRepository.findByEmail(request.getEmail());
