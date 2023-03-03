@@ -1,10 +1,16 @@
 server:
-  port: 0
+  port: 7000
 spring:
   application:
     name: user-service
+  kafka:
+    bootstrap-servers: localhost:9092
+  # config:
+  #     import: "optional:configserver:http://localhost:8888"
+  #     name: ecommerce
+       
   profiles:
-    active: default
+    active: local
   h2:
     console:
       enabled: true
@@ -31,6 +37,7 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     config:
+      profile: local
       uri: http://127.0.0.1:8888
       name: ecommerce
 logging:
@@ -65,7 +72,14 @@ greeting:
 #  refresh-token-validity-in-seconds: 1800 # 30 분
 #  access-token-validity-in-seconds: 300 # 5 분
 management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh,health,beans
+    endpoints:
+        web:
+            exposure:
+                include:
+                    - "*" # (4)
+                    # - "refresh" # 위 '*'  으로 전체를 공개 해서 주석
+                    # - "bus-refresh" # 위 '*'  으로 전체를 공개 해서 주석
+    endpoint:
+        refresh:
+            enabled: true
+            

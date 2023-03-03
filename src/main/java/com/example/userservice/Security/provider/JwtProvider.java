@@ -18,9 +18,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-@RefreshScope
+
 @RequiredArgsConstructor
 @Component
+@RefreshScope
 public class JwtProvider {
 
     @Value("${jwt.secret.key}")
