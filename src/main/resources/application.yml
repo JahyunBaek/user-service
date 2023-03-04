@@ -1,16 +1,17 @@
 server:
-  port: 7000
+  port: 0
 spring:
   application:
     name: user-service
   kafka:
     bootstrap-servers: localhost:9092
-  # config:
-  #     import: "optional:configserver:http://localhost:8888"
-  #     name: ecommerce
-       
   profiles:
     active: local
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
   h2:
     console:
       enabled: true
@@ -35,11 +36,9 @@ spring:
         format_sql: true
   main:
     allow-bean-definition-overriding: true
-  cloud:
-    config:
-      profile: local
-      uri: http://127.0.0.1:8888
-      name: ecommerce
+  config:
+    import:
+      - classpath:/bootstrap.yml
 logging:
   level:
     org:
@@ -66,11 +65,6 @@ eureka:
 greeting:
   message: Welcome to Simple E-Commerce.
 
-#jwt:
-#  secret:
-#    key: Yq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeT
-#  refresh-token-validity-in-seconds: 1800 # 30 분
-#  access-token-validity-in-seconds: 300 # 5 분
 management:
     endpoints:
         web:
@@ -82,4 +76,4 @@ management:
     endpoint:
         refresh:
             enabled: true
-            
+
