@@ -4,6 +4,7 @@ import com.example.userservice.Security.provider.JwtProvider;
 import com.example.userservice.Security.provider.Token;
 import com.example.userservice.Security.provider.TokenDto;
 import com.example.userservice.Security.provider.TokenRepository;
+import com.example.userservice.User.client.OrderServiceClient;
 import com.example.userservice.User.dto.UserDto;
 
 import java.lang.reflect.Type;
@@ -15,6 +16,7 @@ import com.example.userservice.User.repository.UserRepository;
 import com.example.userservice.User.vo.RequestUser;
 import com.example.userservice.User.vo.ResponseOrder;
 import com.example.userservice.User.vo.ResponseUser;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.*;
@@ -22,6 +24,9 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -30,6 +35,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -46,8 +52,14 @@ public class UserServiceImpl implements UsersService {
 
     private final TokenRepository tokenRepository;
 
+    private final OrderServiceClient orderServiceClient;
+    //private final RestTemplate restTemplate;
+
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private Integer r_exp;
+
+    @Value("${orders-service.url}")
+    private String orderUrl;
 
     public ResponseUser login(RequestUser request) throws Exception {
         UserEntity member = userRepository.findByEmail(request.getEmail());
@@ -89,6 +101,8 @@ public class UserServiceImpl implements UsersService {
     @Override
     public UserDto getUserByUserId(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId);
+
+
         if(userEntity == null)
             throw new UsernameNotFoundException("user not found");
 
@@ -96,7 +110,13 @@ public class UserServiceImpl implements UsersService {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserDto userDto = modelMapper.map(userEntity, UserDto.class);
 
-        List<ResponseOrder> responseOrders = new ArrayList<>();
+        /*restTemplate*/
+//        ResponseEntity<List<ResponseOrder>> responseOrders = restTemplate.exchange(String.format(orderUrl,userId),
+//                HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {});
+//        userDto.setOrders(responseOrders.getBody());
+
+        /*Feign client*/
+        List<ResponseOrder> responseOrders = orderServiceClient.getOrders(userId);
         userDto.setOrders(responseOrders);
 
         return userDto;

@@ -54,6 +54,8 @@ dependencies {
     //implementation 'org.springframework.cloud:spring-cloud-starter-bus-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
 }
 
 dependencyManagement {
