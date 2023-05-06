@@ -9,6 +9,7 @@ import com.example.userservice.User.dto.UserDto;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Supplier;
 
 import com.example.userservice.User.entity.Authority;
 import com.example.userservice.User.entity.UserEntity;
@@ -17,12 +18,17 @@ import com.example.userservice.User.vo.RequestUser;
 import com.example.userservice.User.vo.ResponseOrder;
 import com.example.userservice.User.vo.ResponseUser;
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.*;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -54,6 +60,9 @@ public class UserServiceImpl implements UsersService {
 
     private final OrderServiceClient orderServiceClient;
     //private final RestTemplate restTemplate;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+
+    private final RetryRegistry retryRegistry;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private Integer r_exp;
@@ -116,11 +125,18 @@ public class UserServiceImpl implements UsersService {
 //        userDto.setOrders(responseOrders.getBody());
 
         /*Feign client*/
-        List<ResponseOrder> responseOrders = orderServiceClient.getOrders(userId);
+        //List<ResponseOrder> responseOrders = orderServiceClient.getOrders(userId);
+        //userDto.setOrders(responseOrders);
+
+        org.springframework.cloud.client.circuitbreaker.CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+
+        List<ResponseOrder> responseOrders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),Throwable -> new ArrayList<>());
+
         userDto.setOrders(responseOrders);
 
         return userDto;
     }
+
 
     @Override
     public Iterable<UserEntity> getUserByAll() {
